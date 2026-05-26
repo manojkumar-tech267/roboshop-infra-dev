@@ -19,4 +19,10 @@ locals {
             Name = "RoboShopDevBastion"
         }
     )
+    root_final_tags = merge(
+        {
+            Name = "${var.project}-${var.environment}-bastion"
+        },
+        local.common_tags
+    )
 }
