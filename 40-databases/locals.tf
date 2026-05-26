@@ -13,4 +13,10 @@ locals {
         },
         local.common_tags
     )
+    redis_final_tags = merge(
+        {
+            Name = "${var.project}-${var.environment}-redis"
+        },
+        local.common_tags
+    )
 }
