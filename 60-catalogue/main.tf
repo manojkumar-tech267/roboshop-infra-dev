@@ -62,7 +62,7 @@ resource "aws_lb_target_group" "catalogue" {
     path = "/health"
     healthy_threshold = 2
     interval = 10
-    unhealthy_threshold = 2
+    unhealthy_threshold = 3
     matcher = "200-299"
     port = 8080
     protocol = "HTTP"
@@ -85,6 +85,7 @@ resource "aws_launch_template" "catalogue" {
 
 
   vpc_security_group_ids = [local.catalogue_sg_id]
+  
   # each time we apply terraform this version will be updated as default
   update_default_version = true
 
