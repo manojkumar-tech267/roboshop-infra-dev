@@ -1,0 +1,51 @@
+resource "aws_lb" "frontend_alb" {
+  name               = "${var.project}-${var.environment}-frontend"
+  internal           = false
+  load_balancer_type = "application"
+  security_groups    = [local.frontend_alb_sg_id]
+  subnets            = local.public_subnet_ids
+
+  enable_deletion_protection = false
+
+  
+
+  tags = local.alb_final_tags
+}
+
+
+
+resource "aws_lb_listener" "https" {
+  load_balancer_arn = aws_lb.frontend_alb.arn
+  port              = "443"
+  protocol          = "HTTPS"
+  ssl_policy = "ELBSecurityPolicy-TLS13-1-2-2021-06"
+  certificate_arn = local.certificate_arn
+
+   default_action {
+    type = "fixed-response"
+
+    fixed_response {
+      content_type = "text/html"
+      message_body = "<h1>Hi, I am from https frontend-alb</h1>"
+      status_code  = "200"
+    }
+  }
+}
+
+
+
+
+resource "aws_route53_record" "www" {
+  zone_id = var.zone_id
+  name    = "*.${var.domain_name}"
+  type    = "A"
+
+
+  # this are related to load balancer details, not our details
+  alias {
+    name                   = aws_lb.frontend_alb.dns_name
+    zone_id                = aws_lb.frontend_alb.zone_id
+    evaluate_target_health = true # before creating record it checks, is load balancer created or not
+  }
+  allow_overwrite = true
+}
