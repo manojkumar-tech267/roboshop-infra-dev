@@ -78,8 +78,8 @@ resource "aws_security_group_rule" "redis_cart" {
 # MySQL
 resource "aws_security_group_rule" "mysql_bastion" {
   type              = "ingress"
-  from_port         = 3309
-  to_port           = 3309
+  from_port         = 22
+  to_port           = 22
   protocol          = "tcp"
   # where traffic is coming from
   source_security_group_id = local.bastion_sg_id
