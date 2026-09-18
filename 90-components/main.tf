@@ -1,4 +1,4 @@
-module "" {
+module "component" {
     for_each = var.components
     source = "git::https://github.com/manojkumar-tech267/terraform-roboshop-component.git?ref=main"
     component = each.key
