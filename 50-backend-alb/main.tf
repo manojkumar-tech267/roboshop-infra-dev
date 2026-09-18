@@ -37,7 +37,7 @@ resource "aws_route53_record" "www" {
   zone_id = var.zone_id
   name    = "*.backend-alb-${var.environment}.${var.domain_name}"
   type    = "A"
-
+  allow_overwrite = true 
 
   # this are related to load balancer details, not our details
   alias {
