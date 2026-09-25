@@ -1,4 +1,4 @@
-resource "aws_cloudfront_distribution" "s3_distribution" {
+resource "aws_cloudfront_distribution" "roboshop" {
   origin {
     # origin url https://frontend-dev.cloudwithmanoj.shop
     domain_name              = "frontend-${var.environment}.${var.domain_name}"
@@ -8,7 +8,7 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
         http_port                = 80
         https_port               = 443
         origin_protocol_policy   = "https-only" # Ensures traffic between CF and ALB is encrypted
-        origin_ssl_protocols     = ["TLSv1.2","TLSv1.3"]
+        origin_ssl_protocols     = ["TLSv1.2","TLSv1.1"]
     }
   }
 
@@ -63,5 +63,22 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
   viewer_certificate {
     acm_certificate_arn = local.acm_certificate_arn
     ssl_support_method  = "sni-only"
+  }
+}
+
+
+
+resource "aws_route53_record" "cdn" {
+  zone_id = var.zone_id
+  name    = "${var.project}-${var.environment}.${var.domain_name}"
+  type    = "A"
+  allow_overwrite = true
+
+
+  # CDN Details
+  alias {
+    name                   = aws_cloudfront_distribution.roboshop.domain_name
+    zone_id                = aws_cloudfront_distribution.roboshop.hosted_zone_id
+    evaluate_target_health = true # before creating record it checks, is load balancer created or not
   }
 }
